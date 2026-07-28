@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        name="description"
+        content="{% block description %}KG5FCZ amateur radio station website.{% endblock %}"
+    >
+
+    <meta name="theme-color" content="#07131d">
+
+    <title>
+        {% block title %}KG5FCZ | Amateur Radio{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}"
+    >
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <nav class="nav container" aria-label="Main navigation">
+            <a class="brand" href="{{ url_for('main.index') }}">
+                <span class="brand-mark" aria-hidden="true">⌁</span>
+                <span>{{ callsign | default("KG5FCZ") }}</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="{{ url_for('main.index') }}#about">About</a>
+                <a href="{{ url_for('main.index') }}#awards">Awards</a>
+                <a href="{{ url_for('main.index') }}#projects">Projects</a>
+                <a href="{{ url_for('main.index') }}#links">Links</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>73 de {{ callsign | default("KG5FCZ") }}</p>
+            <p>
+                &copy;
+                <span id="year">2026</span>
+                {{ callsign | default("KG5FCZ") }}
+            </p>
+        </div>
+    </footer>
+
+    <script
+        src="{{ url_for('static', filename='js/site.js') }}"
+        defer
+    ></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
