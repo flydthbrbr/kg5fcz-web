@@ -32,13 +32,13 @@
                 <span class="brand-mark" aria-hidden="true">⌁</span>
                 <span>{{ callsign | default("KG5FCZ") }}</span>
             </a>
-
-            <div class="nav-links">
-                <a href="{{ url_for('main.index') }}#about">About</a>
-                <a href="{{ url_for('main.index') }}#awards">Awards</a>
-                <a href="{{ url_for('main.index') }}#projects">Projects</a>
-                <a href="{{ url_for('main.index') }}#links">Links</a>
-            </div>
+		<div class="nav-links">
+			<a href="{{ url_for('main.index') }}">Home</a>
+			<a href="{{ url_for('main.about') }}">About</a>
+			<a href="{{ url_for('main.station') }}">Station</a>
+			<a href="{{ url_for('main.projects') }}">Projects</a>
+			<a href="{{ url_for('main.index') }}#awards">Awards</a>
+		</div>
         </nav>
     </header>
 

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}About | {{ callsign }}{% endblock %}
+
+{% block description %}
+About KG5FCZ, amateur-radio interests, station activities, and software work.
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">About {{ callsign }}</p>
+        <h1 class="page-title">Radio, software, and experimentation</h1>
+
+        <p class="page-intro">
+            This website documents my amateur-radio station, operating
+            interests, equipment, software projects, and technical
+            experiments.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container content-grid">
+        <article class="content-card">
+            <p class="eyebrow">Amateur radio</p>
+            <h2>Operating interests</h2>
+
+            <p>
+                My interests include digital modes, station automation,
+                software-defined workflows, logging, CAT control, and
+                experimenting with new amateur-radio equipment.
+            </p>
+        </article>
+
+        <article class="content-card">
+            <p class="eyebrow">Development</p>
+            <h2>Software projects</h2>
+
+            <p>
+                I am developing and testing software intended to make
+                amateur-radio information, station control, and logging
+                easier to use through a modern web interface.
+            </p>
+        </article>
+
+        <article class="content-card">
+            <p class="eyebrow">Callsign</p>
+            <h2>{{ callsign }}</h2>
+
+            <p>
+                Current operating achievements and callsign information are
+                also available through my public QRZ profile.
+            </p>
+
+            <p>
+                <a
+                    class="text-link"
+                    href="https://www.qrz.com/db/KG5FCZ"
+                    rel="noopener noreferrer"
+                >
+                    View the QRZ profile →
+                </a>
+            </p>
+        </article>
+    </div>
+</section>
+{% endblock %}

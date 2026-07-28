@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Station | {{ callsign }}{% endblock %}
+
+{% block description %}
+The KG5FCZ amateur-radio station, equipment, software, and operating setup.
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        <p class="eyebrow">{{ callsign }} station</p>
+        <h1 class="page-title">Station equipment and operation</h1>
+
+        <p class="page-intro">
+            A growing overview of the radios, software, antennas,
+            accessories, and workflows used at KG5FCZ.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="content-grid">
+            {% for item in equipment %}
+            <article class="content-card">
+                <p class="eyebrow">{{ item.category }}</p>
+                <h2>{{ item.name }}</h2>
+                <p>{{ item.description }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section panel-section">
+    <div class="container split">
+        <div>
+            <p class="eyebrow">Station information</p>
+            <h2>This page will grow with the station</h2>
+        </div>
+
+        <div class="prose">
+            <p>
+                Future updates can include detailed radio specifications,
+                antennas, feed lines, interfaces, power supplies, software,
+                photographs, and station diagrams.
+            </p>
+
+            <p>
+                Equipment information is currently maintained directly in
+                the Flask route. Later, it can be moved into a database or
+                structured data file.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
