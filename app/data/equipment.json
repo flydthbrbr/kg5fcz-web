@@ -1,0 +1,17 @@
+[
+  {
+    "category": "Primary radio",
+    "name": "Yaesu FTX-1 Optima",
+    "description": "Portable and base-station operation with CAT control, digital-mode support, and software integration."
+  },
+  {
+    "category": "Station software",
+    "name": "OpenHamClock",
+    "description": "A browser-based amateur-radio dashboard hosted at clock.kg5fcz.com."
+  },
+  {
+    "category": "Operating",
+    "name": "Digital and mixed-mode operation",
+    "description": "Experimentation with digital modes, logging, rig control, and amateur-radio software."
+  }
+]
