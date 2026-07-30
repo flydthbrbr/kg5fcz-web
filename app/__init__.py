@@ -2,7 +2,6 @@ from flask import Flask
 
 from app.extensions import db, migrate, login_manager
 
-
 def create_app() -> Flask:
     """Create and configure the KG5FCZ Flask application."""
 
@@ -19,6 +18,8 @@ def create_app() -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+
+    from app.models import user
 
     from app.routes import main
 
