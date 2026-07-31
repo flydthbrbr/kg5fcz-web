@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | KG5FCZ{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Sign in</h1>
+
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div>
+            {{ form.identity.label }}
+            {{ form.identity(
+                autocomplete="username",
+                autofocus=true
+            ) }}
+
+            {% for error in form.identity.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.password.label }}
+            {{ form.password(
+                autocomplete="current-password"
+            ) }}
+
+            {% for error in form.password.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.remember_me() }}
+            {{ form.remember_me.label }}
+        </div>
+
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+
+    <p>
+        Need an account?
+        <a href="{{ url_for('auth.register') }}">Register</a>
+    </p>
+</section>
+{% endblock %}
