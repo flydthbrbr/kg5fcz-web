@@ -32,17 +32,51 @@
                 <span class="brand-mark" aria-hidden="true">⌁</span>
                 <span>{{ callsign | default("KG5FCZ") }}</span>
             </a>
-		<div class="nav-links">
-			<a href="{{ url_for('main.index') }}">Home</a>
-			<a href="{{ url_for('main.about') }}">About</a>
-			<a href="{{ url_for('main.station') }}">Station</a>
-			<a href="{{ url_for('main.projects') }}">Projects</a>
-			<a href="{{ url_for('main.index') }}#awards">Awards</a>
-		</div>
+    <div class="nav-links">
+        <a href="{{ url_for('main.index') }}">Home</a>
+        <a href="{{ url_for('main.about') }}">About</a>
+        <a href="{{ url_for('main.station') }}">Station</a>
+        <a href="{{ url_for('main.projects') }}">Projects</a>
+        <a href="{{ url_for('main.index') }}#awards">Awards</a>
+
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.account') }}">
+                {{ current_user.callsign }}
+            </a>
+
+            <form
+                method="post"
+                action="{{ url_for('auth.logout') }}"
+                class="nav-form"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+                <button type="submit">Sign out</button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}">Sign in</a>
+            <a href="{{ url_for('auth.register') }}">Register</a>
+        {% endif %}
+    </div>
         </nav>
     </header>
 
     <main id="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+ 	   {% if messages %}
+       	 <div class="flash-messages">
+        	    {% for category, message in messages %}
+              	  <p class="flash flash-{{ category }}">
+               	     {{ message }}
+             	   </p>
+           	 {% endfor %}
+      	  </div>
+  	  {% endif %}
+	{% endwith %}
+
         {% block content %}{% endblock %}
     </main>
 

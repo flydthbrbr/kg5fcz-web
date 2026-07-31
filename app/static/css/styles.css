@@ -416,3 +416,18 @@ h3 {
     padding: 5rem 0 3rem;
   }
 }
+
+
+.nav-form {
+  display: inline-flex;
+  margin: 0;
+}
+
+.nav-form button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
