@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Review Callsign Lookup | KG5FCZ{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Review callsign information</h1>
+
+    <p>
+        Lookup result for
+        <strong>{{ preview.callsign }}</strong>
+    </p>
+
+    <p>
+        Provider:
+        <strong>{{ preview.provider or "Unknown" }}</strong>
+    </p>
+
+    <form
+        method="post"
+        action="{{ url_for('station_account.apply_station_lookup') }}"
+    >
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Field</th>
+                    <th scope="col">Current</th>
+                    <th scope="col">Lookup</th>
+                    <th scope="col">Apply</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in review_items %}
+                    <tr>
+                        <th scope="row">{{ item.label }}</th>
+
+                        <td>
+                            {{ item.current_value or "Not set" }}
+                        </td>
+
+                        <td>
+                            {{ item.proposed_value or "Not provided" }}
+                        </td>
+
+                        <td>
+                            {% if item.applicable %}
+                                <input
+                                    type="checkbox"
+                                    name="fields"
+                                    value="{{ item.field_name }}"
+                                    {% if item.changed %}checked{% endif %}
+                                    aria-label="Apply {{ item.label }}"
+                                >
+                            {% else %}
+                                Not available
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p>No station information has been changed yet.</p>
+
+        <button type="submit">
+            Apply selected values
+        </button>
+    </form>
+
+    <p>
+        <a href="{{ url_for('station_account.edit_station') }}">
+            Cancel and return to station profile
+        </a>
+    </p>
+</section>
+{% endblock %}
