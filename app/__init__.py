@@ -36,7 +36,7 @@ def create_app(test_config: dict | None = None) -> Flask:
     login_manager.login_message = "Please sign in to access that page."
     login_manager.login_message_category = "info"
 
-    from app.models import Station, User, UserProfile
+    from app.models import Station, User, UserProfile, CallsignLookup
 
     @login_manager.user_loader
     def load_user(user_id: str):
