@@ -11,9 +11,23 @@
         <strong>{{ current_user.callsign }}</strong>
     </p>
 
+    <form
+        method="post"
+        action="{{ url_for('station_account.lookup_station_callsign') }}"
+    >
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+        <button type="submit">
+            Look up {{ current_user.callsign }}
+        </button>
+    </form>
+
     <form method="post" novalidate>
         {{ form.hidden_tag() }}
-
         <div>
             {{ form.station_name.label }}
             {{ form.station_name(placeholder="Home Station") }}
