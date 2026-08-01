@@ -159,3 +159,65 @@ def test_invalid_grid_square_is_rejected(app, client):
     with app.app_context():
         station = db.session.scalar(db.select(Station))
         assert station is None
+def test_callsign_lookup_requires_login(client):
+    response = client.post("/account/station/lookup")
+
+    assert response.status_code == 302
+    assert "/login" in response.headers["Location"]
+
+
+def test_callsign_lookup_creates_station(app, client):
+    register(client)
+    login(client)
+
+    response = client.post(
+        "/account/station/lookup",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Station information was populated" in response.data
+
+    with app.app_context():
+        station = db.session.scalar(db.select(Station))
+
+        assert station is not None
+        assert station.station_name == "W1ABC Station"
+        assert station.grid_square == "FN31"
+        assert station.dxcc_entity == "United States"
+
+
+def test_callsign_lookup_does_not_overwrite_manual_values(
+    app,
+    client,
+):
+    register(client)
+    login(client)
+
+    client.post(
+        "/account/station",
+        data={
+            "station_name": "Portable Station",
+            "grid_square": "EM20AB",
+            "primary_rig": "Yaesu FTX-1 Optima",
+            "primary_antenna": "Portable vertical",
+            "license_class": "Amateur Extra",
+            "dxcc_entity": "Custom Entity",
+        },
+    )
+
+    client.post("/account/station/lookup")
+
+    with app.app_context():
+        station = db.session.scalar(db.select(Station))
+
+        assert station.station_name == "Portable Station"
+        assert station.grid_square == "EM20AB"
+        assert station.dxcc_entity == "Custom Entity"
+        assert station.primary_rig == "Yaesu FTX-1 Optima"
+
+
+def test_lookup_route_rejects_get(client):
+    response = client.get("/account/station/lookup")
+
+    assert response.status_code == 405

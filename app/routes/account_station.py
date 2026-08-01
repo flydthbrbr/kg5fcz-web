@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from app.extensions import db
 from app.forms import StationForm
 from app.models import Station
-
+from app.services.callsign import lookup_callsign
 
 station_account = Blueprint("station_account", __name__)
 
@@ -66,4 +66,52 @@ def edit_station():
         "auth/station.html",
         form=form,
         station=station,
+    )
+
+@station_account.post("/account/station/lookup")
+@login_required
+def lookup_station_callsign():
+    """Populate empty station fields using the user's callsign."""
+
+    record = lookup_callsign(current_user.callsign)
+
+    if record is None:
+        flash(
+            f"No callsign information was found for "
+            f"{current_user.callsign}.",
+            "warning",
+        )
+        return redirect(
+            url_for("station_account.edit_station")
+        )
+
+    station = current_user.station
+
+    if station is None:
+        station = Station(
+            user=current_user,
+            station_name=f"{current_user.callsign} Station",
+        )
+
+    # Do not overwrite values the user entered manually.
+    if not station.grid_square and record.grid_square:
+        station.grid_square = record.grid_square.upper()
+
+    if not station.dxcc_entity and record.dxcc_entity:
+        station.dxcc_entity = record.dxcc_entity
+
+    if not station.station_name or station.station_name == "Home Station":
+        station.station_name = f"{record.callsign} Station"
+
+    db.session.add(station)
+    db.session.commit()
+
+    flash(
+        f"Station information was populated for "
+        f"{record.callsign}.",
+        "success",
+    )
+
+    return redirect(
+        url_for("station_account.edit_station")
     )
