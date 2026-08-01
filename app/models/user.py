@@ -49,6 +49,12 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
     )
 
+    station = db.relationship(
+        "Station",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
 
     @property
     def is_active(self) -> bool:
