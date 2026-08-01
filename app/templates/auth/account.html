@@ -1,36 +1,218 @@
 {% extends "base.html" %}
 
-{% block title %}My Account{% endblock %}
+{% block title %}Dashboard | KG5FCZ{% endblock %}
 
 {% block content %}
+<section class="dashboard container">
+    <header class="dashboard-header">
+        <p class="eyebrow">Operator dashboard</p>
 
-<h1>My Account</h1>
+        <h1>
+            Welcome,
+            {{ profile.display_name if profile and profile.display_name
+               else current_user.callsign }}
+        </h1>
 
-<p><strong>Callsign:</strong> {{ current_user.callsign }}</p>
+        <p>
+            Manage your account, station information, and callsign data.
+        </p>
+    </header>
 
-<p><strong>Email:</strong> {{ current_user.email }}</p>
+    <section class="dashboard-summary" aria-label="Account summary">
+        <article class="summary-card">
+            <span class="summary-label">Callsign</span>
+            <strong>{{ current_user.callsign }}</strong>
+        </article>
 
-<p><strong>Member Since:</strong> {{ current_user.created_at.strftime("%Y-%m-%d") }}</p>
+        <article class="summary-card">
+            <span class="summary-label">Email</span>
+            <strong>{{ current_user.email }}</strong>
+        </article>
 
-<p>
-    <a href="{{ url_for('auth.edit_profile') }}">
-        Edit station profile
-    </a>
-</p>
+        <article class="summary-card">
+            <span class="summary-label">Grid square</span>
+            <strong>
+                {% if station and station.grid_square %}
+                    {{ station.grid_square }}
+                {% elif profile and profile.grid_square %}
+                    {{ profile.grid_square }}
+                {% else %}
+                    Not configured
+                {% endif %}
+            </strong>
+        </article>
 
-<p>
-    <a href="{{ url_for('station_account.edit_station') }}">
-        Edit station information
-    </a>
-</p>
+        <article class="summary-card">
+            <span class="summary-label">Station</span>
+            <strong>
+                {{ station.station_name if station else "Not configured" }}
+            </strong>
+        </article>
+    </section>
 
-<form method="post" action="{{ url_for('auth.logout') }}">
-    <input
-        type="hidden"
-        name="csrf_token"
-        value="{{ csrf_token() }}"
-    >
+    <section class="dashboard-grid" aria-label="Account features">
+        <article class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h2>User profile</h2>
 
-    <button type="submit">Sign out</button>
-</form>
+                {% if profile_complete %}
+                    <span class="status-badge status-complete">
+                        Complete
+                    </span>
+                {% else %}
+                    <span class="status-badge status-incomplete">
+                        Needs setup
+                    </span>
+                {% endif %}
+            </div>
+
+            <p>
+                Manage your display name, grid square, time zone, and
+                preferred units.
+            </p>
+
+            <a
+                class="button-link"
+                href="{{ url_for('auth.edit_profile') }}"
+            >
+                Edit profile
+            </a>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h2>Station profile</h2>
+
+                {% if station_complete %}
+                    <span class="status-badge status-complete">
+                        Complete
+                    </span>
+                {% else %}
+                    <span class="status-badge status-incomplete">
+                        Needs setup
+                    </span>
+                {% endif %}
+            </div>
+
+            <p>
+                Manage your rig, antenna, license class, grid square,
+                and DXCC entity.
+            </p>
+
+            <a
+                class="button-link"
+                href="{{ url_for('station_account.edit_station') }}"
+            >
+                Edit station
+            </a>
+        </article>
+
+        <article class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h2>Callsign lookup</h2>
+
+                <span class="status-badge status-ready">
+                    Ready
+                </span>
+            </div>
+
+            <p>
+                Look up your callsign, review proposed values, and
+                selectively apply them to your station.
+            </p>
+
+            <form
+                method="post"
+                action="{{ url_for(
+                    'station_account.preview_station_lookup'
+                ) }}"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <button type="submit">
+                    Look up {{ current_user.callsign }}
+                </button>
+            </form>
+        </article>
+
+        <article class="dashboard-card dashboard-card-muted">
+            <div class="dashboard-card-header">
+                <h2>OpenHamClock</h2>
+
+                <span class="status-badge status-coming-soon">
+                    Coming soon
+                </span>
+            </div>
+
+            <p>
+                Launch OpenHamClock using your callsign, grid square,
+                and personal display preferences.
+            </p>
+
+            <span class="disabled-link" aria-disabled="true">
+                Launch clock
+            </span>
+        </article>
+
+        <article class="dashboard-card dashboard-card-muted">
+            <div class="dashboard-card-header">
+                <h2>ADIF tools</h2>
+
+                <span class="status-badge status-coming-soon">
+                    Coming soon
+                </span>
+            </div>
+
+            <p>
+                Import, export, and validate ADIF records and station
+                scratchpad data.
+            </p>
+
+            <span class="disabled-link" aria-disabled="true">
+                Open ADIF tools
+            </span>
+        </article>
+
+        <article class="dashboard-card dashboard-card-muted">
+            <div class="dashboard-card-header">
+                <h2>External services</h2>
+
+                <span class="status-badge status-coming-soon">
+                    Coming soon
+                </span>
+            </div>
+
+            <p>
+                Connect QRZ, LoTW, and other amateur-radio services.
+            </p>
+
+            <span class="disabled-link" aria-disabled="true">
+                Manage connections
+            </span>
+        </article>
+    </section>
+
+    <section class="dashboard-actions">
+        <h2>Account</h2>
+
+        <p>
+            Member since
+            {{ current_user.created_at.strftime("%Y-%m-%d") }}
+        </p>
+
+        <form method="post" action="{{ url_for('auth.logout') }}">
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <button type="submit">Sign out</button>
+        </form>
+    </section>
+</section>
 {% endblock %}

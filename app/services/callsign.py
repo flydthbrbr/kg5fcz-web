@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from datetime import datetime
 from typing import Protocol
 
 
@@ -13,6 +14,11 @@ class CallsignRecord:
     cq_zone: int | None = None
     itu_zone: int | None = None
 
+    provider: str | None = None
+    looked_up_at: datetime | None = None
+    from_cache: bool = False
+    stale: bool = False
+
 
 class CallsignProvider(Protocol):
     """Interface implemented by callsign-data providers."""
@@ -25,8 +31,8 @@ class StubCallsignProvider:
     """
     Local development provider.
 
-    Replace this provider later with QRZ, HamQTH, FCC, or another
-    external service without changing routes or templates.
+    Replace this provider later with QRZ, HamDB, HamQTH, FCC, or
+    another external service without changing routes or templates.
     """
 
     _records = {
@@ -58,7 +64,15 @@ class StubCallsignProvider:
 
     def lookup(self, callsign: str) -> CallsignRecord | None:
         normalized = normalize_callsign(callsign)
-        return self._records.get(normalized)
+        record = self._records.get(normalized)
+
+        if record is None:
+            return None
+
+        return replace(
+            record,
+            provider="stub",
+        )
 
 
 def normalize_callsign(callsign: str) -> str:
@@ -71,7 +85,7 @@ def get_callsign_provider() -> CallsignProvider:
     """
     Return the configured lookup provider.
 
-    The first implementation always uses the local stub provider.
+    The current implementation uses the local stub provider.
     """
 
     return StubCallsignProvider()

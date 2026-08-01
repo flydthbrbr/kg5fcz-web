@@ -431,3 +431,144 @@ h3 {
   font: inherit;
   cursor: pointer;
 }
+
+
+.dashboard {
+  padding-block: 2rem 4rem;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin-bottom: 0.5rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card,
+.dashboard-card,
+.dashboard-actions {
+  padding: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.summary-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dashboard-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-card-header h2 {
+  margin: 0;
+}
+
+.dashboard-card p {
+  flex: 1;
+  margin: 0;
+}
+
+.dashboard-card form {
+  margin: 0;
+}
+
+.dashboard-card-muted {
+  opacity: 0.75;
+}
+
+.status-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-complete,
+.status-ready {
+  background: rgba(58, 180, 120, 0.18);
+}
+
+.status-incomplete {
+  background: rgba(225, 165, 45, 0.18);
+}
+
+.status-coming-soon {
+  background: rgba(140, 150, 165, 0.18);
+}
+
+.button-link,
+.disabled-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.4rem;
+}
+
+.button-link {
+  text-decoration: none;
+}
+
+.disabled-link {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-actions h2,
+.dashboard-actions p,
+.dashboard-actions form {
+  margin: 0;
+}

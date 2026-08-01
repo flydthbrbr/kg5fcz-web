@@ -8,25 +8,29 @@ from flask import (
     request,
     url_for,
 )
-from flask_login import (
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
+from flask_login import current_user, login_required, login_user, logout_user
+
 from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.forms import LoginForm, ProfileForm, RegistrationForm
-from app.models import User, UserProfile
+from app.forms import LoginForm, RegistrationForm
+from app.models import User
 
 
 auth = Blueprint("auth", __name__)
 
+user = db.session.scalar(
+    db.select(User).where(
+        or_(
+            func.lower(User.email) == identity.lower(),
+            func.upper(User.callsign) == identity.upper(),
+        )
+    )
+)
 
 def is_safe_redirect_target(target: str | None) -> bool:
-    """Return True only when the redirect remains on this website."""
+    """Return True when target stays on this website."""
 
     if not target:
         return False
@@ -39,14 +43,8 @@ def is_safe_redirect_target(target: str | None) -> bool:
         and host_url.netloc == redirect_url.netloc
     )
 
-
 @auth.route("/register", methods=["GET", "POST"])
 def register():
-    """Register a new user account."""
-
-    if current_user.is_authenticated:
-        return redirect(url_for("auth.account"))
-
     form = RegistrationForm()
 
     if form.validate_on_submit():
@@ -97,15 +95,13 @@ def register():
                     "Registration successful. You can now sign in.",
                     "success",
                 )
-                return redirect(url_for("auth.login"))
+                return redirect(url_for("auth.register"))
 
     return render_template("auth/register.html", form=form)
 
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
-    """Authenticate an existing user."""
-
     if current_user.is_authenticated:
         return redirect(url_for("auth.account"))
 
@@ -116,7 +112,7 @@ def login():
 
         user = db.session.scalar(
             db.select(User).where(
-                or_(
+                db.or_(
                     func.lower(User.email) == identity.lower(),
                     func.upper(User.callsign) == identity.upper(),
                 )
@@ -143,99 +139,14 @@ def login():
     return render_template("auth/login.html", form=form)
 
 
-@auth.post("/logout")
+@auth.route("/logout", methods=["POST"])
 @login_required
 def logout():
-    """End the authenticated user's session."""
-
     logout_user()
     flash("You have been signed out.", "success")
-    return redirect(url_for("main.index"))
+    return redirect(url_for("main.home"))
 
-
-@auth.get("/account")
+@auth.route("/account")
 @login_required
 def account():
-    """Display the authenticated user's dashboard."""
-
-    profile = current_user.profile
-    station = current_user.station
-
-    profile_complete = bool(
-        profile
-        and profile.display_name
-        and profile.grid_square
-        and profile.timezone
-    )
-
-    station_complete = bool(
-        station
-        and station.station_name
-        and station.grid_square
-    )
-
-    return render_template(
-        "auth/account.html",
-        profile=profile,
-        station=station,
-        profile_complete=profile_complete,
-        station_complete=station_complete,
-    )
-
-@auth.get("/auth/check")
-def auth_check():
-    """Return the current authentication state."""
-
-    if not current_user.is_authenticated:
-        return {
-            "authenticated": False,
-        }, 401
-
-    return {
-        "authenticated": True,
-        "user": {
-            "id": current_user.id,
-            "email": current_user.email,
-            "callsign": current_user.callsign,
-        },
-    }, 200
-
-@auth.route("/account/profile", methods=["GET", "POST"])
-@login_required
-def edit_profile():
-    """Create or update the authenticated user's profile."""
-
-    profile = current_user.profile
-
-    if profile is None:
-        profile = UserProfile(user=current_user)
-
-    form = ProfileForm(obj=profile)
-
-    if form.validate_on_submit():
-        profile.display_name = (
-            form.display_name.data.strip()
-            if form.display_name.data
-            else None
-        )
-
-        profile.grid_square = (
-            form.grid_square.data.strip().upper()
-            if form.grid_square.data
-            else None
-        )
-
-        profile.timezone = form.timezone.data
-        profile.preferred_units = form.preferred_units.data
-
-        db.session.add(profile)
-        db.session.commit()
-
-        flash("Your profile has been updated.", "success")
-        return redirect(url_for("auth.edit_profile"))
-
-    return render_template(
-        "auth/profile.html",
-        form=form,
-        profile=profile,
-    )
+    return render_template("auth/account.html")
