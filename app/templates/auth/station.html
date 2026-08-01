@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Station Profile | KG5FCZ{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Station profile</h1>
+
+    <p>
+        Callsign:
+        <strong>{{ current_user.callsign }}</strong>
+    </p>
+
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div>
+            {{ form.station_name.label }}
+            {{ form.station_name(placeholder="Home Station") }}
+            {% for error in form.station_name.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.grid_square.label }}
+            {{ form.grid_square(
+                placeholder="EM20",
+                autocapitalize="characters"
+            ) }}
+            {% for error in form.grid_square.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.primary_rig.label }}
+            {{ form.primary_rig(
+                placeholder="Yaesu FTX-1 Optima"
+            ) }}
+            {% for error in form.primary_rig.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.primary_antenna.label }}
+            {{ form.primary_antenna(
+                placeholder="Dipole, vertical, beam, etc."
+            ) }}
+            {% for error in form.primary_antenna.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.license_class.label }}
+            {{ form.license_class() }}
+            {% for error in form.license_class.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.dxcc_entity.label }}
+            {{ form.dxcc_entity(
+                placeholder="United States"
+            ) }}
+            {% for error in form.dxcc_entity.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        {{ form.submit() }}
+    </form>
+
+    <p>
+        <a href="{{ url_for('auth.account') }}">
+            Return to account
+        </a>
+    </p>
+</section>
+{% endblock %}
