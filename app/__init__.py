@@ -14,6 +14,11 @@ def create_app(test_config: dict | None = None) -> Flask:
             f"sqlite:///{app.instance_path}/kg5fcz.sqlite"
         ),
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
+        CALLSIGN_PROVIDER="hamdb",
+        HAMDB_BASE_URL="http://api.hamdb.org",
+        HAMDB_APPLICATION_NAME="kg5fcz-web",
+        CALLSIGN_LOOKUP_TIMEOUT_SECONDS=5.0,
+        CALLSIGN_PROVIDER_FALLBACK_ENABLED=True,
     )
 
     app.config.from_pyfile("config.py", silent=True)

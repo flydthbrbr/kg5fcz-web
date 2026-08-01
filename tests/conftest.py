@@ -16,6 +16,7 @@ def app(tmp_path):
             "SQLALCHEMY_DATABASE_URI": (
                 f"sqlite:///{database_path}"
             ),
+            "CALLSIGN_PROVIDER": "STUB",
         }
     )
 
