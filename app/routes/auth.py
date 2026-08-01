@@ -18,8 +18,8 @@ from sqlalchemy import func, or_
 from sqlalchemy.exc import IntegrityError
 
 from app.extensions import db
-from app.forms import LoginForm, RegistrationForm
-from app.models import User
+from app.forms import LoginForm, ProfileForm, RegistrationForm
+from app.models import User, UserProfile
 
 
 auth = Blueprint("auth", __name__)
@@ -178,3 +178,43 @@ def auth_check():
             "callsign": current_user.callsign,
         },
     }, 200
+
+@auth.route("/account/profile", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+    """Create or update the authenticated user's profile."""
+
+    profile = current_user.profile
+
+    if profile is None:
+        profile = UserProfile(user=current_user)
+
+    form = ProfileForm(obj=profile)
+
+    if form.validate_on_submit():
+        profile.display_name = (
+            form.display_name.data.strip()
+            if form.display_name.data
+            else None
+        )
+
+        profile.grid_square = (
+            form.grid_square.data.strip().upper()
+            if form.grid_square.data
+            else None
+        )
+
+        profile.timezone = form.timezone.data
+        profile.preferred_units = form.preferred_units.data
+
+        db.session.add(profile)
+        db.session.commit()
+
+        flash("Your profile has been updated.", "success")
+        return redirect(url_for("auth.edit_profile"))
+
+    return render_template(
+        "auth/profile.html",
+        form=form,
+        profile=profile,
+    )

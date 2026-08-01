@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile | KG5FCZ{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Edit profile</h1>
+
+    <p>
+        Callsign:
+        <strong>{{ current_user.callsign }}</strong>
+    </p>
+
+    <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div>
+            {{ form.display_name.label }}
+            {{ form.display_name(autocomplete="name") }}
+
+            {% for error in form.display_name.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.grid_square.label }}
+            {{ form.grid_square(
+                autocapitalize="characters",
+                placeholder="EM20"
+            ) }}
+
+            {% for error in form.grid_square.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.timezone.label }}
+            {{ form.timezone() }}
+
+            {% for error in form.timezone.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.preferred_units.label }}
+            {{ form.preferred_units() }}
+
+            {% for error in form.preferred_units.errors %}
+                <p class="form-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        {{ form.submit() }}
+    </form>
+
+    <p>
+        <a href="{{ url_for('auth.account') }}">
+            Return to account
+        </a>
+    </p>
+</section>
+{% endblock %}

@@ -42,6 +42,14 @@ class User(UserMixin, db.Model):
         default=lambda: datetime.now(timezone.utc),
     )
 
+    profile = db.relationship(
+        "UserProfile",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+
+
     @property
     def is_active(self) -> bool:
         return self.is_active_account
