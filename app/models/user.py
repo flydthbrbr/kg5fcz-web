@@ -56,6 +56,13 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
     )
 
+    clock_settings = db.relationship(
+        "ClockSettings",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+
     @property
     def is_active(self) -> bool:
         return self.is_active_account
