@@ -63,6 +63,13 @@ class User(UserMixin, db.Model):
         cascade="all, delete-orphan",
     )
 
+    api_tokens = db.relationship(
+        "ApiToken",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
     @property
     def is_active(self) -> bool:
         return self.is_active_account
