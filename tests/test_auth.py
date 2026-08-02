@@ -88,7 +88,7 @@ def test_login_with_email(client):
     response = login(client)
 
     assert response.status_code == 200
-    assert b"My Account" in response.data
+    assert b"Operator dashboard" in response.data
     assert CALLSIGN.encode() in response.data
     assert EMAIL.encode() in response.data
 
@@ -98,7 +98,7 @@ def test_login_with_callsign(client):
     response = login(client, identity=CALLSIGN.lower())
 
     assert response.status_code == 200
-    assert b"My Account" in response.data
+    assert b"Operator dashboard" in response.data
     assert CALLSIGN.encode() in response.data
 
 
