@@ -221,3 +221,91 @@ def test_lookup_route_rejects_get(client):
     response = client.get("/account/station/lookup")
 
     assert response.status_code == 405
+
+def test_lookup_review_does_not_change_station(app, client):
+    register(client)
+    login(client)
+
+    response = client.post(
+        "/account/station/lookup/preview",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Review callsign information" in response.data
+    assert b"No station information has been changed" in response.data
+
+    with app.app_context():
+        station = db.session.scalar(db.select(Station))
+        assert station is None
+
+
+def test_apply_selected_lookup_values(app, client):
+    register(client)
+    login(client)
+
+    client.post("/account/station/lookup/preview")
+
+    response = client.post(
+        "/account/station/lookup/apply",
+        data={
+            "fields": [
+                "station_name",
+                "grid_square",
+            ],
+        },
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"Selected callsign values were applied" in response.data
+
+    with app.app_context():
+        station = db.session.scalar(db.select(Station))
+
+        assert station is not None
+        assert station.station_name == "W1ABC Station"
+        assert station.grid_square == "FN31"
+        assert station.dxcc_entity is None
+
+
+def test_apply_only_allows_known_fields(app, client):
+    register(client)
+    login(client)
+
+    client.post("/account/station/lookup/preview")
+
+    client.post(
+        "/account/station/lookup/apply",
+        data={
+            "fields": [
+                "primary_rig",
+                "password_hash",
+            ],
+        },
+    )
+
+    with app.app_context():
+        station = db.session.scalar(db.select(Station))
+
+        assert station is not None
+        assert station.primary_rig is None
+
+
+def test_apply_without_preview_redirects(client):
+    register(client)
+    login(client)
+
+    response = client.post(
+        "/account/station/lookup/apply",
+        follow_redirects=True,
+    )
+
+    assert response.status_code == 200
+    assert b"There is no callsign lookup result to apply" in response.data
+
+
+def test_lookup_apply_rejects_get(client):
+    response = client.get("/account/station/lookup/apply")
+
+    assert response.status_code == 405
