@@ -44,10 +44,12 @@ def create_app(test_config: dict | None = None) -> Flask:
     from app.routes.auth import auth
     from app.routes.account_station import station_account
     from app.routes.account_api import account_api
+    from app.routes.account_clock import account_clock
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(station_account)
     app.register_blueprint(account_api)
+    app.register_blueprint(account_clock)
 
     return app
