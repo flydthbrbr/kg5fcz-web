@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}API Tokens | KG5FCZ{% endblock %}
+
+{% block content %}
+<section class="container">
+    <h1>API tokens</h1>
+
+    <p>
+        Create a read-only token for OpenHamClock or another trusted
+        client. Treat each token like a password.
+    </p>
+
+    {% if new_token %}
+        <section class="token-created" aria-labelledby="new-token-title">
+            <h2 id="new-token-title">Copy this token now</h2>
+
+            <p>
+                This is the only time the full token will be displayed.
+            </p>
+
+            <label for="new-api-token">
+                {{ new_token.name }}
+            </label>
+
+            <textarea
+                id="new-api-token"
+                rows="3"
+                readonly
+            >{{ new_token.token }}</textarea>
+        </section>
+    {% endif %}
+
+    <section>
+        <h2>Create token</h2>
+
+        <form method="post" novalidate>
+            {{ create_form.hidden_tag() }}
+
+            <div>
+                {{ create_form.name.label }}
+                {{ create_form.name(
+                    placeholder="OpenHamClock"
+                ) }}
+
+                {% for error in create_form.name.errors %}
+                    <p class="form-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            {{ create_form.submit() }}
+        </form>
+    </section>
+
+    <section>
+        <h2>Existing tokens</h2>
+
+        {% if tokens %}
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Prefix</th>
+                        <th scope="col">Scope</th>
+                        <th scope="col">Created</th>
+                        <th scope="col">Last used</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for token in tokens %}
+                        <tr>
+                            <td>{{ token.name }}</td>
+
+                            <td>
+                                <code>{{ token.token_prefix }}…</code>
+                            </td>
+
+                            <td>{{ token.scope }}</td>
+
+                            <td>
+                                {{ token.created_at.strftime(
+                                    "%Y-%m-%d %H:%M UTC"
+                                ) }}
+                            </td>
+
+                            <td>
+                                {% if token.last_used_at %}
+                                    {{ token.last_used_at.strftime(
+                                        "%Y-%m-%d %H:%M UTC"
+                                    ) }}
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if token.is_revoked %}
+                                    Revoked
+                                {% else %}
+                                    Active
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if not token.is_revoked %}
+                                    <form
+                                        method="post"
+                                        action="{{ url_for(
+                                            'account_api_tokens.revoke_token',
+                                            token_id=token.id
+                                        ) }}"
+                                    >
+                                        {{ revoke_form.hidden_tag() }}
+                                        {{ revoke_form.submit() }}
+                                    </form>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No API tokens have been created.</p>
+        {% endif %}
+    </section>
+
+    <p>
+        <a href="{{ url_for('auth.account') }}">
+            Return to dashboard
+        </a>
+    </p>
+</section>
+{% endblock %}
