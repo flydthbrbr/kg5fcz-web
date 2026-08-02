@@ -43,9 +43,13 @@ def create_app(test_config: dict | None = None) -> Flask:
     from app.routes import main
     from app.routes.auth import auth
     from app.routes.account_station import station_account
+    from app.routes.account_api_tokens import account_api_tokens
+    from app.routes.clock_api import clock_api
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(station_account)
+    app.register_blueprint(account_api_tokens)
+    app.register_blueprint(clock_api)
 
     return app
